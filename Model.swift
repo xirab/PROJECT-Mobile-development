@@ -55,16 +55,13 @@ enum CustomError: Error {
 
 // Request Factory
 protocol RequestFactoryProtocol {
-    func createRequest(urlStr: String, requestType: RequestType, params:
-[String]?) -> URLRequest
-    func getScheduleList(callback: @escaping ((errorType: CustomError?,
-     errorMessage: String?), [Schedule]?) -> Void)
+    func createRequest(urlStr: String, requestType: RequestType, params:[String]?) -> URLRequest
+    func getScheduleList(callback: @escaping ((errorType: CustomError?, errorMessage: String?), [Schedule]?) -> Void)
 }
 private let furnitureUrlStr = "https://api.airtable.com/v0/appXKn0DvuHuLw4DV/Schedule"
 
 class RequestFactory: RequestFactoryProtocol {
-    internal func createRequest(urlStr: String, requestType: RequestType,
-     params: [String]?) -> URLRequest {
+    internal func createRequest(urlStr: String, requestType: RequestType, params: [String]?) -> URLRequest {
         var url: URL = URL(string: urlStr)!
         if let params = params {
             var urlParams = urlStr
@@ -78,40 +75,32 @@ class RequestFactory: RequestFactoryProtocol {
         request.timeoutInterval = 100
         request.httpMethod = requestType.rawValue
         let accessToken = "keyizYAq1t1hCQ34"
-        request.setValue("Bearer \(accessToken)", forHTTPHeaderField:
-         "Authorization")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         return request
-}
-    func getFurnitureList(callback: @escaping ((errorType: CustomError?,
-     errorMessage: String?), [Schedule]?) -> Void) {
+    }
+    
+    func getFurnitureList(callback: @escaping ((errorType: CustomError?, errorMessage: String?), [Schedule]?) -> Void) {
         let session = URLSession(configuration: .default)
-        let task = session.dataTask(with: createRequest(urlStr:
-furnitureUrlStr,
-if let data = data, error == nil {
-    if let responseHttp = response as? HTTPURLResponse {
-        if responseHttp.statusCode == 200 {
-            if let response = try?
-             JSONDecoder().decode(Records.self, from: data) {
-                callback((nil, nil), response.records)
-}
-else {
-                callback((CustomError.parsingError, "parsing
-                 error"), nil)
-} }
-     requestType: .get,
-     params: nil)) {
-(data, response, error)
-in
-
-else {
-                    callback((CustomError.statusCodeError, "status
-                     code: \(responseHttp.statusCode)"), nil)
+        let task = session.dataTask(with: createRequest(urlStr: furnitureUrlStr, requestType: .get, params:nil)){
+            (data, responce, error) in if let data = data, error == nil {
+                if let responseHttp = response as? HTTPURLResponse {
+                    if responseHttp.statusCode == 200 {
+                        if let response = try? JSONDecoder().decode(Records.self, from: data) {
+                            callback((nil, nil), response.records)
+                        }
+                        else {
+                            callback((CustomError.parsingError, "parsing error"), nil)
+                        }
+                    }
+                    else {
+                        callback((CustomError.statusCodeError, "status code: \(responseHttp.statusCode)"), nil)
+                    }
                 }
-} }
-        else {
-            callback((CustomError.requestError,
-             error.debugDescription), nil)
+            }
+            else {
+                callback((CustomError.requestError, error.debugDescription), nil)
+            }
         }
-}
-    task.resume()
+        task.resume()
+    }
 }
