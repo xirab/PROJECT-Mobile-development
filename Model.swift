@@ -17,27 +17,23 @@ struct Schedule--: Codable {
 }
 struct Fields: Codable {
     let activity: String
-    let type: String?
-    let start: [ScheduleDate]
-    let end: [ScheduleDate]
+    let type: String
+    let start: String
+    let end: String
     let notes: String?
-    let location: String
-    let speaker: String?
-    let topic: String?
+    let location: [String]
+    let speaker: [String]?
+    let topic: [String]?
     enum CodingKeys: String, CodingKey {
         case activity = "Activity"
         case type = "Type"
-        case start = [ScheduleDate.dateday, ScheduleDate.datetime]
-        case end = [ScheduleDate.dateday, ScheduleDate.datetime]]
+        case start = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        case end = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         case notes = "Notes"
-        case location = "Location"
-        case speaker = "Speaker"
-        case topic = "Topic"
+        case location = ["Location"]
+        case speaker = ["Speaker"]
+        case topic = ["Topic"]
     }
-}
-struct ScheduleDate: Codable {
-    let dateday: String
-    let datetime String
 }
 struct Response: Codable {
     let id: String
