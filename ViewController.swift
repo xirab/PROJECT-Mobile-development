@@ -11,9 +11,20 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        let requestFactory = RequestFactory()
+        requestFactory.getFurnitureList { 
+            (errorHandle, furnitures) in 
+            if let _ = errorHandle.errorType, let errorMessage = errorHandle.errorMessage {
+                print(errorMessage)
+            }
+            else if let list = furnitures, let furniture = list.last {
+                print(furniture.id)
+            }
+            else {
+                print("Houston we got a problem")
+            }
+        }
     }
-
-
 }
 
